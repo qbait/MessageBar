@@ -34,7 +34,7 @@ public class SampleActivity extends Activity implements MessageBar.OnMessageClic
         findViewById(R.id.withText).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mMessageBar.show("Message #" + mCount);
+                mMessageBar.show("Message #" + mCount, MessageBar.INFO);
                 mCount++;
             }
         });
@@ -44,7 +44,7 @@ public class SampleActivity extends Activity implements MessageBar.OnMessageClic
             public void onClick(View v) {
                 Bundle b = new Bundle();
                 b.putInt("count", mCount);
-                mMessageBar.show("Message #" + mCount, "Button!", R.drawable.ic_messagebar_undo, b);
+                mMessageBar.show("Message #" + mCount, MessageBar.ERROR, "Button!", R.drawable.ic_messagebar_undo, b);
                 mCount++;
             }
         });

@@ -24,6 +24,10 @@ public class MessageBar {
         void onMessageDisappearWithoutClick(Parcelable token);
     }
 
+    public static final int INFO = 0;
+    public static final int ERROR = 1;
+    public static final int WARNING = 2;
+
     private static final String STATE_MESSAGES = "net.simonvt.messagebar.MessageBar.messages";
     private static final String STATE_CURRENT_MESSAGE = "net.simonvt.messagebar.MessageBar.currentMessage";
 
@@ -107,20 +111,20 @@ public class MessageBar {
         }
     }
 
-    public void show(String message) {
-        show(message, null);
+    public void show(String message, int type) {
+        show(message, type, null);
     }
 
-    public void show(String message, String actionMessage) {
-        show(message, actionMessage, 0);
+    public void show(String message, int type, String actionMessage) {
+        show(message, type, actionMessage, 0);
     }
 
-    public void show(String message, String actionMessage, int actionIcon) {
-        show(message, actionMessage, actionIcon, null);
+    public void show(String message, int type, String actionMessage, int actionIcon) {
+        show(message, type, actionMessage, actionIcon, null);
     }
 
-    public void show(String message, String actionMessage, int actionIcon, Parcelable token) {
-        Message m = new Message(message, actionMessage, actionIcon, token);
+    public void show(String message, int type, String actionMessage, int actionIcon, Parcelable token) {
+        Message m = new Message(message, type, actionMessage, actionIcon, token);
         if (mShowing) {
             mMessages.add(m);
         } else {
@@ -135,6 +139,7 @@ public class MessageBar {
     private void show(Message message, boolean immediately) {
         mShowing = true;
         mContainer.setVisibility(View.VISIBLE);
+        mContainer.setBackgroundResource(getBackgroundResource(message.mType));
         mCurrentMessage = message;
         mTextView.setText(message.mMessage);
         if (message.mActionMessage != null) {
@@ -222,14 +227,17 @@ public class MessageBar {
 
         final String mMessage;
 
+        final int mType;
+
         final String mActionMessage;
 
         final int mActionIcon;
 
         final Parcelable mToken;
 
-        public Message(String message, String actionMessage, int actionIcon, Parcelable token) {
+        public Message(String message, int type, String actionMessage, int actionIcon, Parcelable token) {
             mMessage = message;
+            mType = type;
             mActionMessage = actionMessage;
             mActionIcon = actionIcon;
             mToken = token;
@@ -237,6 +245,7 @@ public class MessageBar {
 
         public Message(Parcel p) {
             mMessage = p.readString();
+            mType = p.readInt();
             mActionMessage = p.readString();
             mActionIcon = p.readInt();
             mToken = p.readParcelable(getClass().getClassLoader());
@@ -244,6 +253,7 @@ public class MessageBar {
 
         public void writeToParcel(Parcel out, int flags) {
             out.writeString(mMessage);
+            out.writeInt(mType);
             out.writeString(mActionMessage);
             out.writeInt(mActionIcon);
             out.writeParcelable(mToken, 0);
@@ -262,5 +272,16 @@ public class MessageBar {
                 return new Message[size];
             }
         };
+    }
+
+    private int getBackgroundResource(int type) {
+        switch (type) {
+            case WARNING:
+                return R.drawable.mb__messagebar_background_orange;
+            case ERROR:
+                return R.drawable.mb__messagebar_background_red;
+            default:
+                return R.drawable.mb__messagebar_background_gray;
+        }
     }
 }
