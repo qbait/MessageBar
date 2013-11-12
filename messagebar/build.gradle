@@ -4,7 +4,7 @@ apply plugin: 'signing'
 
 android {
     compileSdkVersion 18
-    buildToolsVersion "18.0.0"
+    buildToolsVersion "18.0.1"
 
     sourceSets {
         main {
@@ -53,59 +53,4 @@ task androidSourcesJar(type: Jar) {
 artifacts {
     archives androidSourcesJar
     archives androidJavadocsJar
-}
-
-uploadArchives {
-    configuration = configurations.archives
-
-    repositories.mavenDeployer {
-        beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-        repository(url: sonatypeRepo) {
-            authentication(userName: sonatypeUsername, password: sonatypePassword)
-        }
-        
-        pom.groupId = parent.ext.groupId
-        pom.artifactId = project.ext.artifactId
-        pom.version = parent.version
-
-        pom.project {
-            name 'MessageBar'
-            packaging 'aar'
-            description 'An alternative to the android Toast class, as seen in the GMail app.'
-            url 'https://github.com/SimonVT/MessageBar'
-
-            scm {
-                url 'http://github.com/SimonVT/MessageBar/'
-                connection 'scm:git:git://github.com/SimonVT/MessageBar.git'
-                developerConnection 'scm:git:git@github.com:SimonVT/MessageBar.git'
-            }
-
-            licenses {
-                license {
-                    name 'Apache License Version 2.0'
-                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    distribution 'repo'
-                }
-            }
-
-            issueManagement {
-                system 'GitHub Issues'
-                url 'https://github.com/SimonVT/MessageBar/issues'
-            }
-
-            developers {
-                developer {
-                    id 'simonvt'
-                    name 'Simon Vig Therkildsen'
-                    email 'simonvt@gmail.com'
-                    url 'http://simonvt.net'
-                    timezone '1'
-                    roles {
-                        role 'developer'
-                    }
-                }
-            }
-        }
-    }
 }
