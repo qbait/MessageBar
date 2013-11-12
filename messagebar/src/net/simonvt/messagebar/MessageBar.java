@@ -17,8 +17,11 @@ import java.util.LinkedList;
 public class MessageBar {
 
     public interface OnMessageClickListener {
-
         void onMessageClick(Parcelable token);
+    }
+
+    public interface OnMessageDisappearWithoutClickListener {
+        void onMessageDisappearWithoutClick(Parcelable token);
     }
 
     private static final String STATE_MESSAGES = "net.simonvt.messagebar.MessageBar.messages";
@@ -41,6 +44,8 @@ public class MessageBar {
     private boolean mShowing;
 
     private OnMessageClickListener mClickListener;
+
+    private OnMessageDisappearWithoutClickListener mDisappearListener;
 
     private Handler mHandler;
 
@@ -75,15 +80,7 @@ public class MessageBar {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                Message nextMessage = mMessages.poll();
-
-                if (nextMessage != null) {
-                    show(nextMessage);
-                } else {
-                    mCurrentMessage = null;
-                    mContainer.setVisibility(View.GONE);
-                    mShowing = false;
-                }
+                hideMessageBar();
             }
 
             @Override
@@ -92,6 +89,22 @@ public class MessageBar {
         });
 
         mHandler = new Handler();
+    }
+
+    private void hideMessageBar() {
+        if (mDisappearListener != null && mCurrentMessage != null) {
+            mDisappearListener.onMessageDisappearWithoutClick(mCurrentMessage.mToken);
+        }
+
+        Message nextMessage = mMessages.poll();
+
+        if (nextMessage != null) {
+            show(nextMessage);
+        } else {
+            mCurrentMessage = null;
+            mContainer.setVisibility(View.GONE);
+            mShowing = false;
+        }
     }
 
     public void show(String message) {
@@ -160,9 +173,14 @@ public class MessageBar {
         mClickListener = listener;
     }
 
+    public void setOnDisappearListener(OnMessageDisappearWithoutClickListener listener) {
+        mDisappearListener = listener;
+    }
+
     public void clear() {
         mMessages.clear();
-        mHideRunnable.run();
+        hideMessageBar();
+        mHandler.removeCallbacks(mHideRunnable);
     }
 
     private final Runnable mHideRunnable = new Runnable() {

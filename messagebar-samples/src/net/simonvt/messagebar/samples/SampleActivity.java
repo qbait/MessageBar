@@ -3,12 +3,14 @@ package net.simonvt.messagebar.samples;
 import net.simonvt.messagebar.MessageBar;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-public class SampleActivity extends Activity implements MessageBar.OnMessageClickListener {
+public class SampleActivity extends Activity implements MessageBar.OnMessageClickListener, MessageBar.OnMessageDisappearWithoutClickListener {
 
     private static final String STATE_MESSAGEBAR = "net.simonvt.messagebar.samples.SampleActivity.messageBar";
     private static final String STATE_COUNT = "net.simonvt.messagebar.samples.SampleActivity.count";
@@ -27,6 +29,7 @@ public class SampleActivity extends Activity implements MessageBar.OnMessageClic
 
         mMessageBar = new MessageBar(this);
         mMessageBar.setOnClickListener(this);
+        mMessageBar.setOnDisappearListener(this);
 
         findViewById(R.id.withText).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -43,6 +46,16 @@ public class SampleActivity extends Activity implements MessageBar.OnMessageClic
                 b.putInt("count", mCount);
                 mMessageBar.show("Message #" + mCount, "Button!", R.drawable.ic_messagebar_undo, b);
                 mCount++;
+            }
+        });
+
+        findViewById(R.id.newActivity).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mMessageBar.clear();
+                Intent intent = new Intent(SampleActivity.this, NewActivity.class);
+                startActivity(intent);
+
             }
         });
     }
@@ -66,5 +79,11 @@ public class SampleActivity extends Activity implements MessageBar.OnMessageClic
         Bundle b = (Bundle) token;
         final int count = b.getInt("count");
         mTextView.setText("You clicked message #" + count);
+        Log.d("dupa", "onMessageClick");
+    }
+
+    @Override
+    public void onMessageDisappearWithoutClick(Parcelable token) {
+        Log.d("dupa", "onMessageDisappearWithoutClick");
     }
 }
