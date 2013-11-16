@@ -1,9 +1,7 @@
 package net.simonvt.messagebar;
 
 import android.app.Activity;
-import android.os.Bundle;
 import android.os.Handler;
-import android.os.Parcel;
 import android.os.Parcelable;
 import android.view.Gravity;
 import android.view.View;
@@ -15,7 +13,6 @@ import android.widget.TextView;
 import java.util.LinkedList;
 
 public class MessageBar {
-
     public interface OnMessageClickListener {
         void onMessageClick(Parcelable token);
     }
@@ -27,53 +24,30 @@ public class MessageBar {
     public static final int INFO = 0;
     public static final int ERROR = 1;
     public static final int WARNING = 2;
-
-    private static final String STATE_MESSAGES = "net.simonvt.messagebar.MessageBar.messages";
-    private static final String STATE_CURRENT_MESSAGE = "net.simonvt.messagebar.MessageBar.currentMessage";
-
     private static final int ANIMATION_DURATION = 600;
+    private static final int HIDE_DELAY = 2000;
 
-    private static final int HIDE_DELAY = 5000;
+    private static MessageBar mInstance;
 
+    private Activity mActivity;
     private View mContainer;
-
     private TextView mTextView;
-
     private TextView mButton;
-
     private LinkedList<Message> mMessages = new LinkedList<Message>();
-
     private Message mCurrentMessage;
-
     private boolean mShowing;
-
-    private OnMessageClickListener mClickListener;
-
-    private OnMessageDisappearWithoutClickListener mDisappearListener;
-
     private Handler mHandler;
-
     private AlphaAnimation mFadeInAnimation;
-
     private AlphaAnimation mFadeOutAnimation;
 
-    public MessageBar(Activity activity) {
-        ViewGroup container = (ViewGroup) activity.findViewById(android.R.id.content);
-        View v = activity.getLayoutInflater().inflate(R.layout.mb__messagebar, container);
-        init(v);
+    public static MessageBar getInstance() {
+        if (mInstance == null) {
+            mInstance = new MessageBar();
+        }
+        return mInstance;
     }
 
-    public MessageBar(View v) {
-        init(v);
-    }
-
-    private void init(View v) {
-        mContainer = v.findViewById(R.id.mbContainer);
-        mContainer.setVisibility(View.GONE);
-        mTextView = (TextView) v.findViewById(R.id.mbMessage);
-        mButton = (TextView) v.findViewById(R.id.mbButton);
-        mButton.setOnClickListener(mButtonListener);
-
+    private MessageBar() {
         mFadeInAnimation = new AlphaAnimation(0.0f, 1.0f);
         mFadeOutAnimation = new AlphaAnimation(1.0f, 0.0f);
         mFadeOutAnimation.setDuration(ANIMATION_DURATION);
@@ -96,8 +70,11 @@ public class MessageBar {
     }
 
     private void hideMessageBar() {
-        if (mDisappearListener != null && mCurrentMessage != null) {
-            mDisappearListener.onMessageDisappearWithoutClick(mCurrentMessage.mToken);
+        View mbContainer = mActivity.findViewById(R.id.mbContainer);
+        ((ViewGroup) mbContainer.getParent()).removeView(mbContainer);
+
+        if (mCurrentMessage != null && mCurrentMessage.mDisappearListener != null) {
+            mCurrentMessage.mDisappearListener.onMessageDisappearWithoutClick(mCurrentMessage.mToken);
         }
 
         Message nextMessage = mMessages.poll();
@@ -111,7 +88,7 @@ public class MessageBar {
         }
     }
 
-    public void show(String message, int type) {
+/*    public void show(String message, int type) {
         show(message, type, null);
     }
 
@@ -121,10 +98,11 @@ public class MessageBar {
 
     public void show(String message, int type, String actionMessage, int actionIcon) {
         show(message, type, actionMessage, actionIcon, null);
-    }
+    }*/
 
-    public void show(String message, int type, String actionMessage, int actionIcon, Parcelable token) {
-        Message m = new Message(message, type, actionMessage, actionIcon, token);
+    public void show(Activity activity, String message, int type, String actionMessage, int actionIcon, Parcelable token, OnMessageClickListener clickListener, OnMessageDisappearWithoutClickListener disappearListener, int container) {
+        mActivity = activity;
+        Message m = new Message(message, type, actionMessage, actionIcon, token, clickListener, disappearListener, container);
         if (mShowing) {
             mMessages.add(m);
         } else {
@@ -137,6 +115,13 @@ public class MessageBar {
     }
 
     private void show(Message message, boolean immediately) {
+        View v = mActivity.getLayoutInflater().inflate(R.layout.mb__messagebar, (ViewGroup) mActivity.findViewById(message.mContainer));
+        mContainer = v.findViewById(R.id.mbContainer);
+
+        mTextView = (TextView) v.findViewById(R.id.mbMessage);
+        mButton = (TextView) v.findViewById(R.id.mbButton);
+        mButton.setOnClickListener(mButtonListener);
+
         mShowing = true;
         mContainer.setVisibility(View.VISIBLE);
         mContainer.setBackgroundResource(getBackgroundResource(message.mType));
@@ -146,7 +131,6 @@ public class MessageBar {
             mTextView.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
             mButton.setVisibility(View.VISIBLE);
             mButton.setText(message.mActionMessage);
-
             mButton.setCompoundDrawablesWithIntrinsicBounds(message.mActionIcon, 0, 0, 0);
         } else {
             mTextView.setGravity(Gravity.CENTER);
@@ -165,8 +149,8 @@ public class MessageBar {
     private final View.OnClickListener mButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (mClickListener != null && mCurrentMessage != null) {
-                mClickListener.onMessageClick(mCurrentMessage.mToken);
+            if (mCurrentMessage != null && mCurrentMessage.mClickListener != null) {
+                mCurrentMessage.mClickListener.onMessageClick(mCurrentMessage.mToken);
                 mCurrentMessage = null;
                 mHandler.removeCallbacks(mHideRunnable);
                 mHideRunnable.run();
@@ -174,17 +158,11 @@ public class MessageBar {
         }
     };
 
-    public void setOnClickListener(OnMessageClickListener listener) {
-        mClickListener = listener;
-    }
-
-    public void setOnDisappearListener(OnMessageDisappearWithoutClickListener listener) {
-        mDisappearListener = listener;
-    }
-
-    public void clear() {
+    public void cancelAll() {
         mMessages.clear();
-        hideMessageBar();
+        if (mShowing) {
+            hideMessageBar();
+        }
         mHandler.removeCallbacks(mHideRunnable);
     }
 
@@ -195,83 +173,26 @@ public class MessageBar {
         }
     };
 
-    public void onRestoreInstanceState(Bundle state) {
-        Message currentMessage = state.getParcelable(STATE_CURRENT_MESSAGE);
-        if (currentMessage != null) {
-            show(currentMessage, true);
-            Parcelable[] messages = state.getParcelableArray(STATE_MESSAGES);
-            for (Parcelable p : messages) {
-                mMessages.add((Message) p);
-            }
-        }
-    }
-
-    public Bundle onSaveInstanceState() {
-        Bundle b = new Bundle();
-
-        b.putParcelable(STATE_CURRENT_MESSAGE, mCurrentMessage);
-
-        final int count = mMessages.size();
-        final Message[] messages = new Message[count];
-        int i = 0;
-        for (Message message : mMessages) {
-            messages[i++] = message;
-        }
-
-        b.putParcelableArray(STATE_MESSAGES, messages);
-
-        return b;
-    }
-
-    private static class Message implements Parcelable {
-
+    private class Message {
         final String mMessage;
-
         final int mType;
-
         final String mActionMessage;
-
         final int mActionIcon;
-
         final Parcelable mToken;
+        final OnMessageClickListener mClickListener;
+        final OnMessageDisappearWithoutClickListener mDisappearListener;
+        final int mContainer;
 
-        public Message(String message, int type, String actionMessage, int actionIcon, Parcelable token) {
+        public Message(String message, int type, String actionMessage, int actionIcon, Parcelable token, OnMessageClickListener clickListener, OnMessageDisappearWithoutClickListener disappearListener, int container) {
             mMessage = message;
             mType = type;
             mActionMessage = actionMessage;
             mActionIcon = actionIcon;
             mToken = token;
+            mClickListener = clickListener;
+            mDisappearListener = disappearListener;
+            mContainer = container;
         }
-
-        public Message(Parcel p) {
-            mMessage = p.readString();
-            mType = p.readInt();
-            mActionMessage = p.readString();
-            mActionIcon = p.readInt();
-            mToken = p.readParcelable(getClass().getClassLoader());
-        }
-
-        public void writeToParcel(Parcel out, int flags) {
-            out.writeString(mMessage);
-            out.writeInt(mType);
-            out.writeString(mActionMessage);
-            out.writeInt(mActionIcon);
-            out.writeParcelable(mToken, 0);
-        }
-
-        public int describeContents() {
-            return 0;
-        }
-
-        public static final Parcelable.Creator<Message> CREATOR = new Parcelable.Creator<Message>() {
-            public Message createFromParcel(Parcel in) {
-                return new Message(in);
-            }
-
-            public Message[] newArray(int size) {
-                return new Message[size];
-            }
-        };
     }
 
     private int getBackgroundResource(int type) {

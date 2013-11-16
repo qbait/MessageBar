@@ -5,6 +5,13 @@
     android:layout_height="match_parent"
     android:gravity="center">
 
+    <FrameLayout
+        android:id="@+id/whiteContainer"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:orientation="vertical"
+        android:background="@android:color/white"/>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
