@@ -30,6 +30,12 @@
         android:text="With text and button" />
 
     <Button
+        android:id="@+id/confirmMessageBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="confirm MessageBar" />
+
+    <Button
         android:id="@+id/newActivity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
