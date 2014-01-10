@@ -125,6 +125,11 @@ class Manager {
     };
 
     public void cancelAll() {
+        for(MessageBar messageBar : mMessageBars) {
+            if(messageBar.mMessageBarCallback != null) {
+                messageBar.mMessageBarCallback.onDisappearWhithoutMessageClick();
+            }
+        }
         mMessageBars.clear();
         if (mShowing) {
             hideMessageBar();
