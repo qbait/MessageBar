@@ -51,12 +51,20 @@ public class MessageBar {
         make(activity, message, style, DURATION_SHORT, android.R.id.content, null, 0, null).show();
     }
 
+    public static void show(Activity activity, String message, int style, int container) {
+        make(activity, message, STYLE_INFO, DURATION_SHORT, container, null, 0, null).show();
+    }
+
     public static void showUndo(Activity activity, MessageBarCallback messageBarCallback, int container) {
-        make(activity, "zapisano dane", STYLE_INFO, DURATION_LONG, container, "przywróć", R.drawable.mb__ic_messagebar_undo, messageBarCallback).show();
+        make(activity, "zapisano dane", STYLE_INFO, DURATION_LONG, container, "cofnij", R.drawable.mb__ic_messagebar_undo, messageBarCallback).show();
     }
 
     public static void showUndo(Activity activity, MessageBarCallback messageBarCallback) {
-        make(activity, "zapisano dane", STYLE_INFO, DURATION_LONG, android.R.id.content, "przywróć", R.drawable.mb__ic_messagebar_undo, messageBarCallback).show();
+        make(activity, "zapisano dane", STYLE_INFO, DURATION_LONG, android.R.id.content, "cofnij", R.drawable.mb__ic_messagebar_undo, messageBarCallback).show();
+    }
+
+    public static void showUndo(Activity activity, String message, MessageBarCallback messageBarCallback) {
+        make(activity, message, STYLE_INFO, DURATION_LONG, android.R.id.content, "cofnij", R.drawable.mb__ic_messagebar_undo, messageBarCallback).show();
     }
 
     public static void showConfirm(Activity activity, String message, int style, int container) {
