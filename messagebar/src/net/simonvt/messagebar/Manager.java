@@ -55,6 +55,9 @@ class Manager {
     }
 
     private void hideMessageBar() {
+        if(mCurrentMessageBar == null) {
+            return;
+        }
         View mbContainer = mCurrentMessageBar.mActivity.findViewById(R.id.mbContainer);
         ((ViewGroup) mbContainer.getParent()).removeView(mbContainer);
 
