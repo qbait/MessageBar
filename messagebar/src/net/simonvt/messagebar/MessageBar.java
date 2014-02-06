@@ -75,6 +75,14 @@ public class MessageBar {
         make(activity, message, style, DURATION_INFINITE, android.R.id.content, "ok", 0, defaultMessageBarCallback).show();
     }
 
+    public static void showError(Activity activity, String message) {
+        show(activity, message, STYLE_ERROR);
+    }
+
+    public static void showWarning(Activity activity, String message) {
+        show(activity, message, STYLE_WARNING);
+    }
+
     public void show() {
         Manager.getInstance().add(this);
     }
