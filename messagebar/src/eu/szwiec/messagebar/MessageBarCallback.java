@@ -1,4 +1,4 @@
-package net.simonvt.messagebar;
+package eu.szwiec.messagebar;
 
 public interface MessageBarCallback {
     public void onMessageClick();
