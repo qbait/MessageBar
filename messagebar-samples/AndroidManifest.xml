@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="net.simonvt.messagebar.samples"
+    package="eu.szwiec.messagebar.samples"
     android:versionCode="1"
     android:versionName="1.0">
 
@@ -13,14 +13,14 @@
         android:icon="@drawable/ic_launcher"
         android:theme="@style/android:Theme.Holo">
         <activity
-            android:name="SampleActivity"
+            android:name="eu.szwiec.messagebar.samples.SampleActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".NewActivity"
+        <activity android:name="eu.szwiec.messagebar.samples.NewActivity"
             android:label="new activity">
         </activity>
     </application>

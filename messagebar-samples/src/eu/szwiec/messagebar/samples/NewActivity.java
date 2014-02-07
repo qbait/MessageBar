@@ -1,12 +1,12 @@
-package net.simonvt.messagebar.samples;
+package eu.szwiec.messagebar.samples;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
-import net.simonvt.messagebar.MessageBar;
-import net.simonvt.messagebar.MessageBarCallback;
+import eu.szwiec.messagebar.MessageBar;
+import eu.szwiec.messagebar.MessageBarCallback;
 
 public class NewActivity extends Activity {
 

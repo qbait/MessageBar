@@ -3,7 +3,7 @@ MessageBar
 
 An Android Toast replacement, similar to the one seen in the GMail app.
 Multiple messages can be posted in succession, and each message will be
-shown for 5 seconds.
+shown for 5 seconds. You can show different type of messages like ERROR, WARNING, CONFIRM, ...
 
 
 Usage
@@ -81,13 +81,13 @@ mMessageBar.show("This is a message");
 Credits
 =======
 
- * Roman Nurik for creating the [example][1] this library is based on.
+ * SimonVT for creating the [library][1] this library is based on.
 
 
 License
 =======
 
-    Copyright 2012 Simon Vig Therkildsen
+    Copyright 2013 Jakub Szwiec
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -104,4 +104,4 @@ License
 
 
 
- [1]: https://code.google.com/p/romannurik-code/source/browse/#git%2Fmisc%2Fundobar
+ [1]: https://github.com/SimonVT/MessageBar

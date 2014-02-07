@@ -1,4 +1,4 @@
-package net.simonvt.messagebar;
+package eu.szwiec.messagebar;
 
 import android.app.Activity;
 import android.view.ViewGroup;
