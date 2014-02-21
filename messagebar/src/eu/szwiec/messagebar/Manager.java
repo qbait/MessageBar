@@ -121,6 +121,7 @@ class Manager {
             if (mCurrentMessageBar != null && mCurrentMessageBar.mMessageBarCallback != null) {
                 mCurrentMessageBar.mMessageBarCallback.onMessageClick();
                 mIsButtonClicked = true;
+                v.setEnabled(false);
                 mHandler.removeCallbacks(mHideRunnable);
                 mHideRunnable.run();
             }
