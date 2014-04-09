@@ -7,6 +7,7 @@ public class MessageBar {
     public static final int STYLE_INFO = 0;
     public static final int STYLE_ERROR = 1;
     public static final int STYLE_WARNING = 2;
+    public static final int STYLE_HELP = 3;
 
     public static final int DURATION_INFINITE = -1;
     public static final int DURATION_SHORT = 3000;
@@ -83,6 +84,10 @@ public class MessageBar {
         show(activity, message, STYLE_WARNING);
     }
 
+    public static void showHelp(Activity activity, String message) {
+        show(activity, message, STYLE_HELP);
+    }
+
     public void show() {
         Manager.getInstance().add(this);
     }
@@ -97,6 +102,8 @@ public class MessageBar {
                 return R.drawable.mb__messagebar_background_orange;
             case STYLE_ERROR:
                 return R.drawable.mb__messagebar_background_red;
+            case STYLE_HELP:
+                return R.drawable.mb__messagebar_background_violet;
             default:
                 return R.drawable.mb__messagebar_background_gray;
         }
