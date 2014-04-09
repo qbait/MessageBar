@@ -56,23 +56,23 @@ public class MessageBar {
     }
 
     public static void showUndo(Activity activity, MessageBarCallback messageBarCallback, int container) {
-        make(activity, "zapisano dane", STYLE_INFO, DURATION_LONG, container, "cofnij", R.drawable.mb__ic_messagebar_undo, messageBarCallback).show();
+        make(activity, activity.getString(R.string.data_saved), STYLE_INFO, DURATION_LONG, container, activity.getString(R.string.undo), R.drawable.mb__ic_messagebar_undo, messageBarCallback).show();
     }
 
     public static void showUndo(Activity activity, MessageBarCallback messageBarCallback) {
-        make(activity, "zapisano dane", STYLE_INFO, DURATION_LONG, android.R.id.content, "cofnij", R.drawable.mb__ic_messagebar_undo, messageBarCallback).show();
+        make(activity, activity.getString(R.string.data_saved), STYLE_INFO, DURATION_LONG, android.R.id.content, activity.getString(R.string.undo), R.drawable.mb__ic_messagebar_undo, messageBarCallback).show();
     }
 
     public static void showUndo(Activity activity, String message, MessageBarCallback messageBarCallback) {
-        make(activity, message, STYLE_INFO, DURATION_LONG, android.R.id.content, "cofnij", R.drawable.mb__ic_messagebar_undo, messageBarCallback).show();
+        make(activity, message, STYLE_INFO, DURATION_LONG, android.R.id.content, activity.getString(R.string.undo), R.drawable.mb__ic_messagebar_undo, messageBarCallback).show();
     }
 
     public static void showConfirm(Activity activity, String message, int style, int container) {
-        make(activity, message, style, DURATION_INFINITE, container, "ok", 0, defaultMessageBarCallback).show();
+        make(activity, message, style, DURATION_INFINITE, container, activity.getString(R.string.ok), 0, defaultMessageBarCallback).show();
     }
 
     public static void showConfirm(Activity activity, String message, int style) {
-        make(activity, message, style, DURATION_INFINITE, android.R.id.content, "ok", 0, defaultMessageBarCallback).show();
+        make(activity, message, style, DURATION_INFINITE, android.R.id.content, activity.getString(R.string.ok), 0, defaultMessageBarCallback).show();
     }
 
     public static void showError(Activity activity, String message) {
